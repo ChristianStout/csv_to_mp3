@@ -48,55 +48,74 @@ ffmpeg - google how to install it and put it in the same directory as your
 all below modules (youtube_dl, pandas, bs4) - install w/ "pip3 install youtube_dl" and etc.
 
 '''
-import youtube_dl
+import yt_dlp as youtube_dl
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import sys
+import os
 
 songs_csv = "songs.csv"
-
-def get_href(url):
-    response = requests.get(url)
-    content = response.content
-    soup = BeautifulSoup(content, "lxml")
-    # Get all the links to videos, because the first might be an ad
-    tag = [a['href'] for a in soup.find_all("a", {'class', 'yt-uix-tile-link'}, text=True)]
-    return tag
-
+cache = dict()
 
 def yt_dler(vid_link):
-	# d/l settings
+    # d/l settings
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
-            'preferredquality': '192',
+            'preferredquality': '320',
         }],
-        'quiet': True,
-        'restrictfilenames': True}
+        # 'quiet': True,
+        'restrictfilenames': True
+        }
     ydl = youtube_dl.YoutubeDL(ydl_opts)
     ydl.download([vid_link])
 
-
 def main():
-	songs = pd.read_csv(songs_csv)
-	search_url = 'https://www.youtube.com/results?search_query='
-	yt_link = 'http://www.youtube.com'
-	i=0
-	while i<len(songs["song"]):
-		this_song = songs["song"][i]+" "+ songs["artist"][i]
-		this_search = "+".join(this_song.strip().split())
-		div = get_href(search_url+this_search)
-		# sometimes the first is an ad and ads start with 'https...' whereas genuine video links are just the "/asDFeG4BLaH" 
-		if "https" not in div[0]:
-			link_ext = div[0]
-		else:
-			link_ext = div[1]
-		complete_link = yt_link+link_ext
-		print(i, this_song, complete_link)
-		yt_dler(complete_link)
-		i+=1
+    # Modification by ChristianStout - Require commandline args
+    args = sys.argv[1:]
+
+    if len(args) != 1:
+        print("Usage: csv_to_mp3 [CSV_FILE]")
+        return
+
+    # 1. First argument must be the CSV path
+    songs_csv = args[0]
+
+    # # 2. Second argument must be output DIRECTORY
+    # output_dir = args[1]
+
+    if not os.path.isfile(songs_csv):
+        print(f"Error: {songs_csv} is not a valid file")
+        return
+    # if not os.path.isdir(output_dir):
+    #     print(f"Error: {output_dir} is not a valid directory")
+    #     return
+
+    # End Mod
+
+    songs = pd.read_csv(songs_csv)
+    search_url = 'https://www.youtube.com/results?search_query='
+    yt_link = 'http://www.youtube.com'
+    i = 0
+    while i < len(songs["song"]):
+        # in case there are any repitions, we want to cache artist and song, and skip any we have already done
+        artist = songs["artist"][i]
+        song = songs["song"][i]
+        if not artist in cache.keys():
+            cache[artist] = set()
+        if song in cache[artist]:
+            i += 1
+            continue
+        cache[artist].add(song)
+
+        this_search = f"{artist} {song} official audio"
+
+        yt_dler(f'ytsearch:{this_search}')
+        i += 1
+
 
 if __name__ == "__main__":
     main()

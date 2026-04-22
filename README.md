@@ -33,3 +33,9 @@ $ git clone https://github.com/HarryMaher/csv_to_mp3.git
 5. Drag the music to your offline device, and enjoy!
 
 Note: It really only works for decently popular songs on youtube
+
+```bash
+python3 -m venv .
+source bin/activate
+pip3 install yt-dlp bs4 pandas requests lxml 
+```
