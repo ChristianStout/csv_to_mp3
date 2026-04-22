@@ -24,18 +24,17 @@ to drag to an mp3 player to before going on a run or bike ride
 ### NOTE: This is only verified to work on Linux/MacOS systems.
 Windows system can also run this script, but may need some modifications to some commands. Most likely the `source` command below.
 
-0. Clone this repo:
+### 0. Clone this repo:
 ```
 $ git clone https://github.com/ChristianStout/csv_to_mp3.git
 ```
 
-1. Install ffmpeg (https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
-You can do so by looking in their (documentation)[https://ffmpeg.org/download.html].
-(This guide)[https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg] may also be helpful.
+### 1. Install ffmpeg
+You can do so by looking in their [documentation](https://ffmpeg.org/download.html).
+[This guide](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg) may also be helpful.
 
-2. Navigate to this repo on your local machine, and create a virtual evnironment.
-### Why? 
-`pip3` is no longer reccomended to be run directly on a machine, so we create a virtual envirment in the repo directory.
+### 2. Navigate to this repo on your local machine, and create a virtual evnironment.
+Why? `pip3` is no longer reccomended to be run directly on a machine, so we create a virtual envirment in the repo directory.
 
 To do so, run this command:
 ```bash
@@ -44,30 +43,22 @@ python3 -m venv .
 source bin/activate
 ```
 
-### NOTE: The `source` command must be run on any new terminal instance before running the script again.
-Otherwise, the installed libraries will not be found.
-
-3. Install needed libraries
+### 3. Install needed libraries
 Run this command in the repo directory:
 
 ```bash
 pip3 install yt-dlp bs4 pandas requests lxml 
 ```
 
-If for any reason when attemping to run the script it says their is a library missing, just run:
-```bash
-pip3 install <possible-missing-library>
-```
+### 4. Create a `csv` with a `song` and `artist` field (case sensitive)
+It can have more fields, but it *must* contain those exact field names.
 
-4. Create a `csv` with a `song` and `artist` field (case sensitive)
-It can have more fields, but it MUST contain those exact field names.
-
-5. Run script
-You may want to `cd` into a directory that you want your music. Then with the same terminal instance
+### 5. Run script
+You may want to `cd` into the directory that you want your music. Then with the same terminal instance
 that ran the `source bin/active` command, run
 `python3 <path-to-repo>/csv_to_mp3.py <path-to-csv-file>`
 
-6. Enjoy!
+### 6. Enjoy!
 
 ## Troubleshooting
 
@@ -84,17 +75,18 @@ There many possible reasons a specific song can fail. It may have been tagged fo
 had no results. In this case you will need manual intervention. Run the command in the above section to
 manually download the song you want.
 
-### I tried to run this script again in a new terminal instance, but it wont run
+### I tried to using this script again in a new terminal instance, but it wont run
 Since we are running in a virtual environment, the `source` command *must* be run on any new terminal
 instance before running the script again. Otherwise, the installed libraries will not be found.
 ```
 source <path-to-repo>/bin/activate
 ```
 
-### It says there is a missing library
-If for any reason when attemping to run the script it says their is a library missing, in the repo directory, run:
+### It says there's a missing library
+If for any reason when attemping to run the script it says their is a library missing *after running `source`*, in the repo directory, run:
 ```bash
 pip3 install <missing-library>
 ```
 
+This can happen if libraries gain new dependancies in the future.
 
